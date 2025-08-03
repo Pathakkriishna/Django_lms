@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Available Courses</h2>
+
+  <!-- Search bar -->
+  <form method="get">
+    <input type="text" name="q" placeholder="Search courses...">
+    <button type="submit">Search</button>
+  </form>
+
+  <ul>
+    {% for course in courses %}
+      <li>
+        <strong>{{ course.title }}</strong> by {{ course.instructor.username }}<br>
+        Difficulty: {{ course.difficulty }}<br>
+
+        <!-- Enroll link -->
+        <a href="{% url 'enroll_course' course.id %}">Enroll</a>
+      </li>
+    {% empty %}
+      <li>No courses available.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
