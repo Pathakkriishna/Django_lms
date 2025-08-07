@@ -1,0 +1,44 @@
+/* default font */
+body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background-color: #f8f9fa;  /* Light gray background */
+}
+
+/* Main content area */
+main {
+    padding: 2rem;
+    min-height: 80vh;  /* Minimum height = 80% of viewport */
+}
+
+/* Navbar spacing  */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+/* Navbar Customizations */
+.navbar {
+    padding: 0.5rem 1rem;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+}
+
+/* Dropdown arrow color */
+.dropdown-toggle::after {
+    border-top-color: white;
+}
+
+/* Active nav link indicator */
+.nav-link.active {
+    position: relative;
+}
+
+.nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: white;
+}
