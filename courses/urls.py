@@ -11,6 +11,8 @@ urlpatterns = [
 
     # student side urls
     path('student/', views.student_course_list, name='student_course_list'),
-    path('student/enroll/<int:course_id>/', views.enroll_in_course, name='enroll_in_course'),
+    path('student/enroll/<int:course_id>/', views.enroll_in_course, name='enroll_course'),
+    path('student/dashboard/', views.student_dashboard, name='student_dashboard'),
+    path('student/enrolled/', views.enrolled_courses_view, name='enrolled_courses'),
 
 ]

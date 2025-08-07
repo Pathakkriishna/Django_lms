@@ -1,21 +1,27 @@
 {% extends 'base.html' %}
-
 {% block content %}
   <h2>Available Courses</h2>
 
-  <!-- Search bar -->
-  <form method="get">
-    <input type="text" name="q" placeholder="Search courses...">
+  <!-- Search & Difficulty Filter Form -->
+  <form method="get" action="">
+    <input type="text" name="q" placeholder="Search courses" value="{{ search_query }}">
+    
+    <select name="difficulty">
+      <option value="">All Levels</option>
+      <option value="Beginner" {% if selected_difficulty == "Beginner" %}selected{% endif %}>Beginner</option>
+      <option value="Intermediate" {% if selected_difficulty == "Intermediate" %}selected{% endif %}>Intermediate</option>
+      <option value="Advanced" {% if selected_difficulty == "Advanced" %}selected{% endif %}>Advanced</option>
+    </select>
+
     <button type="submit">Search</button>
   </form>
 
+  <!-- Course List -->
   <ul>
     {% for course in courses %}
       <li>
         <strong>{{ course.title }}</strong> by {{ course.instructor.username }}<br>
         Difficulty: {{ course.difficulty }}<br>
-
-        <!-- Enroll link -->
         <a href="{% url 'enroll_course' course.id %}">Enroll</a>
       </li>
     {% empty %}

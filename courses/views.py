@@ -56,10 +56,11 @@ def delete_course(request, course_id):
 @login_required
 @user_passes_test(is_student)
 def student_course_list(request):
-    query = request.GET.get('q')  # Get search query from URL
-    courses = Course.objects.all()  # Get all courses
+    query = request.GET.get('q')  # Get the text search query
+    difficulty = request.GET.get('difficulty')  # Get difficulty filter
+    courses = Course.objects.all()  # Start with all courses
 
-    # If there is a search query, filter by title, description, instructor name, or difficulty
+    # If user typed something in search bar
     if query:
         courses = courses.filter(
             Q(title__icontains=query) |
@@ -68,7 +69,16 @@ def student_course_list(request):
             Q(difficulty__icontains=query)
         )
 
-    return render(request, 'courses/student_course_list.html', {'courses': courses})
+    # If user selected difficulty from dropdown (Beginner, Intermediate, Advanced)
+    if difficulty:
+        courses = courses.filter(difficulty=difficulty)
+
+    # Return the filtered courses to the template
+    return render(request, 'courses/student_course_list.html', {
+        'courses': courses,
+        'selected_difficulty': difficulty or '',  # Pass current selected difficulty back to template
+        'search_query': query or ''  # Pass current search term back to template
+    })
 
 # This view lets a logged-in student enroll in a course
 @login_required
@@ -76,4 +86,29 @@ def student_course_list(request):
 def enroll_in_course(request, course_id):
     course = get_object_or_404(Course, id=course_id)  # Get the course by ID
     Enrollment.objects.get_or_create(student=request.user, course=course)  # Enroll if not already enrolled
-    return redirect('student_course_list')  # Redirect back to course list
+    return redirect('student_course_list')  
+
+
+# Helper function to check if user is in Student group
+def is_student(user):
+    return user.groups.filter(name='Student').exists()
+
+# Student Dashboard: Show courses the student is enrolled in
+@user_passes_test(is_student)
+@login_required
+def student_dashboard(request):
+    enrollments = Enrollment.objects.filter(student=request.user).select_related('course')
+    return render(request, 'courses/student_dashboard.html', {'enrollments': enrollments})
+
+#This view displays the courses in which the logged-in student is enrolled.
+@login_required
+@user_passes_test(is_student)
+def enrolled_courses_view(request):
+    # Get all enrollments for the currently logged-in user
+    enrollments = Enrollment.objects.filter(student=request.user)
+
+    # Extract the actual course objects from those enrollments
+    courses = [enrollment.course for enrollment in enrollments]
+
+    # Render the template with enrolled courses
+    return render(request, 'courses/enrolled_courses.html', {'courses': courses})
