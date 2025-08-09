@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
+from .forms import UserRegisterForm
 from django.http import HttpResponse
 
 
@@ -20,21 +21,26 @@ def sponsor_dashboard(request):
 
 def register_user(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        role = request.POST['role']
+        form = UserRegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)  # don't save to DB yet
+            user.set_password(form.cleaned_data['password'])  # hash password
+            user.save()
 
-        user = User.objects.create_user(username=username, password=password)
-        group = Group.objects.get(name=role)
-        user.groups.add(group)
-        user.save()
+            # Assign the role (group)
+            role = form.cleaned_data['role']
+            group = Group.objects.get(name=role)
+            user.groups.add(group)
 
-        login(request, user)
-        messages.success(
-            request, f"Welcome {username}! You're registered as a {role}")
-        return redirect('register')
+            # Auto login after registration
+            login(request, user)
+            messages.success(request, f"Welcome {user.username}! You're registered as a {role}.")
+            return redirect('home')  # change to desired page
+    else:
+        form = UserRegisterForm()
+    
+    return render(request, 'users/register.html', {'form': form})
 
-    return render(request, 'users/register.html')
 
 def login_user(request):
     if request.method == 'POST':
