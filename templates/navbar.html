@@ -32,20 +32,38 @@
                         {% with group=user.groups.first %}
                             {% if group %}
                                 ({{ group.name }})
-                            <!-- {% else %}
-                                (No Role)
-                            {% endif %} -->
+                            {% endif %}
                         {% endwith %}
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="#">
                             <i class="bi bi-person me-2"></i> Profile
                         </a></li>
-                        {% if user.role == 'ADMIN' %}
+
+                        <!-- Notifications Link -->
+                        <li>
+                            <a class="dropdown-item d-flex justify-content-between align-items-center" href="{% url 'student_notifications' %}">
+                                <span><i class="bi bi-bell me-2"></i> Notifications</span>
+                                {% if unread_notification_count > 0 %}
+                                <span class="badge bg-danger rounded-pill">{{ unread_notification_count }}</span>
+                                {% endif %}
+                            </a>
+                        </li>
+
+                        <!-- Admin Panel Link -->
+                        {% if user.groups.first.name == 'Admin' %}
                         <li><a class="dropdown-item" href="#">
                             <i class="bi bi-gear me-2"></i> Admin Panel
                         </a></li>
                         {% endif %}
+
+                        <!-- Sponsor Dashboard Link -->
+                        {% if user.groups.first.name == 'Sponsor' %}
+                        <li><a class="dropdown-item" href="#">
+                            <i class="bi bi-cash-coin me-2"></i> Sponsor Dashboard
+                        </a></li>
+                        {% endif %}
+
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">
                             <i class="bi bi-box-arrow-right me-2"></i> Logout

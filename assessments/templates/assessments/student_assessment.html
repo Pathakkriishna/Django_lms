@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+  <h2>My Assessments</h2>
+
+  {% if assessments %}
+    <ul>
+      {% for assessment in assessments %}
+        <li style="margin-bottom: 20px;">
+          <strong>{{ assessment.title }}</strong><br>
+          <em>Course:</em> {{ assessment.course.title }}<br>
+          <em>Due:</em> {{ assessment.due_date|date:"M d, Y H:i" }}<br>
+          <em>Total Marks:</em> {{ assessment.total_marks }}<br>
+          <p>{{ assessment.description }}</p>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No assessments available.</p>
+  {% endif %}
+{% endblock %}

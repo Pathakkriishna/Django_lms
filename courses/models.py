@@ -31,13 +31,3 @@ class Enrollment(models.Model):
         return f"{self.student.username} enrolled in {self.course.title}"
     
 
-class Assignment(models.Model):
-    title = models.CharField(max_length=200)
-    description = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    due_date = models.DateTimeField()
-    total_marks = models.IntegerField()
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='assessments')
-
-    def __str__(self):
-        return f"{self.title} ({self.course.title})"

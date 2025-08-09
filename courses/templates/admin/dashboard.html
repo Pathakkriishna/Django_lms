@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+    <h2><i class="bi bi-bar-chart-fill me-2"></i> Admin Dashboard</h2>
+    <hr>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white shadow">
+                <div class="card-body">
+                    <i class="bi bi-people-fill me-2"></i>
+                    Total Users: {{ total_users }}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card bg-success text-white shadow">
+                <div class="card-body">
+                    <i class="bi bi-book-fill me-2"></i>
+                    Courses: {{ total_courses }}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card bg-info text-white shadow">
+                <div class="card-body">
+                    <i class="bi bi-check2-square me-2"></i>
+                    Enrollments: {{ total_enrollments }}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card bg-warning text-dark shadow">
+                <div class="card-body">
+                    <i class="bi bi-person-badge-fill me-2"></i>
+                    Instructors: {{ total_instructors }}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card bg-danger text-white shadow">
+                <div class="card-body">
+                    <i class="bi bi-person-fill me-2"></i>
+                    Students: {{ total_students }}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card bg-secondary text-white shadow">
+                <div class="card-body">
+                    <i class="bi bi-calendar3 me-2"></i>
+                    Assessments: {{ total_assessments }}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card bg-dark text-white shadow">
+                <div class="card-body">
+                    <i class="bi bi-bell-fill me-2"></i>
+                    Notifications: {{ total_notifications }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

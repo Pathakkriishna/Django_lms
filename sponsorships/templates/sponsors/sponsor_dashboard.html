@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>📊 Sponsor Dashboard</h2>
+    <table class="table table-bordered table-striped mt-3">
+        <thead class="table-primary">
+            <tr>
+                <th>Student</th>
+                <th>Amount Funded (Rs.)</th>
+                <th>Date Funded</th>
+                <th>Progress</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sponsorship in sponsorships %}
+            <tr>
+                <td>{{ sponsorship.student.username }}</td>
+                <td>{{ sponsorship.amount }}</td>
+                <td>{{ sponsorship.date_funded|date:"Y-m-d H:i" }}</td>
+                <td>
+                    <!-- Placeholder Progress -->
+                    <div class="progress" style="height: 20px;">
+                        <div class="progress-bar bg-success" role="progressbar" 
+                             style="width: 40%;" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">
+                            40%
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="text-center">No students funded yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

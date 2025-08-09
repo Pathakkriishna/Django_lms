@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>My Notifications</h2>
+<ul>
+{% for notification in notifications %}
+    <div>
+        {{ notification.message }} - {{ notification.created_at|date:"M d, Y H:i" }}
+        {% if not notification.is_read %}
+            <a href="{% url 'mark_notification_as_read' notification.pk %}">Mark as read</a>
+        {% endif %}
+    </div>
+{% endfor %}
+
+</ul>
+{% endblock %}

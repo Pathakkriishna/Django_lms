@@ -1,8 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Course, Enrollment
+from notifications.models import Notification
+from assessments.models import Assessment
+from django.contrib.auth.models import User
 from .forms import CourseForm
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.db.models import Q
+from django.core.paginator import Paginator
 
 # function to check wheather the logged in user is instructor or not
 def is_instructor(user):
@@ -11,6 +15,10 @@ def is_instructor(user):
 # function to check wheather the logged in user is student or not
 def is_student(user):
     return user.groups.filter(name='Student').exists()
+
+# function to check wheather the logged in user is admin or not
+def is_admin(user):
+    return user.is_superuser or user.groups.filter(name='Admin').exists()
 
 # View to show list of courses created by the logged-in instructor
 @login_required
@@ -69,13 +77,19 @@ def student_course_list(request):
             Q(difficulty__icontains=query)
         )
 
+
     # If user selected difficulty from dropdown (Beginner, Intermediate, Advanced)
     if difficulty:
         courses = courses.filter(difficulty=difficulty)
 
+    # Pagination
+    paginator = Paginator(courses, 5)  # Show 5 courses per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     # Return the filtered courses to the template
     return render(request, 'courses/student_course_list.html', {
-        'courses': courses,
+        'courses': page_obj,
         'selected_difficulty': difficulty or '',  # Pass current selected difficulty back to template
         'search_query': query or ''  # Pass current search term back to template
     })
@@ -84,8 +98,18 @@ def student_course_list(request):
 @login_required
 @user_passes_test(is_student)
 def enroll_in_course(request, course_id):
-    course = get_object_or_404(Course, id=course_id)  # Get the course by ID
-    Enrollment.objects.get_or_create(student=request.user, course=course)  # Enroll if not already enrolled
+    course = get_object_or_404(Course, id=course_id)
+
+    # Check if the student is already enrolled
+    enrollment, created = Enrollment.objects.get_or_create(student=request.user, course=course)
+
+    # Send notification only if it's a new enrollment
+    if created:
+        Notification.objects.create(
+            user=request.user,
+            message=f"You have enrolled in the course: {course.title}"
+        )
+
     return redirect('student_course_list')  
 
 
@@ -112,3 +136,19 @@ def enrolled_courses_view(request):
 
     # Render the template with enrolled courses
     return render(request, 'courses/enrolled_courses.html', {'courses': courses})
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_dashboard(request):
+    context = {
+        'total_users': User.objects.count(),
+        'total_students': User.objects.filter(groups__name='Student').count(),
+        'total_instructors': User.objects.filter(groups__name='Instructor').count(),
+        'total_courses': Course.objects.count(),
+        'total_enrollments': Enrollment.objects.count(),
+        'total_assessments': Assessment.objects.count(),
+        'total_notifications': Notification.objects.count(),
+    }
+
+    return render(request, 'admin/dashboard.html', context)
